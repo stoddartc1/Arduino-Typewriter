@@ -15,7 +15,10 @@ const int latchPin = 11;
 //int one = 0;
 //int two = 0;
 bool isCaps = false;
-char prev = ' ';
+char prev = 0;
+
+const int printDelay = 25;
+const int doubleCharDelay = 68; //when the same key needs to be typed twice, we need an extra delay. type writter tries to prevent accidental double types
 
 void setup() {
   // put your setup code here, to run once:
@@ -28,8 +31,6 @@ void setup() {
   digitalWrite(outputEnable, HIGH);
   //writeString("\n");
 }
-
-//String str = "";
 
 
 void loop() {
@@ -55,25 +56,6 @@ void printSerial()
   }
 }
 
-
-/*void writeString(String s) {
-  String sNew = String(s);
-  for (int i = 0; i < sNew.length(); i++) {
-    /*if (isupper(s.charAt(i)) != isCaps) {
-      shift(!isCaps);
-      }*//*
-    char c = tolower(sNew.charAt(i));
-    if (Serial.available() < 1) {
-      printChar(c);
-      prev = c;
-    } else {
-      str += sNew.substring(i, sNew.length());
-      //  Serial.println(str);
-      i = sNew.length();
-    }
-  }
-}*/
-
 void writeToShiftRegister(bool arr[], int len) {
   digitalWrite(latchPin, 0);
   digitalWrite(outputEnable, HIGH);
@@ -89,13 +71,14 @@ void writeToShiftRegister(bool arr[], int len) {
   digitalWrite(latchPin, 1);
   digitalWrite(latchPin, 0);
   digitalWrite(outputEnable, LOW);
-  delay(25);
+  delay(printDelay);
   digitalWrite(outputEnable, HIGH);
-  delay(25);
+  delay(printDelay);
 }
+
 void printChar(char c) {
   if (c == prev) {
-    delay(68);
+    delay(doubleCharDelay);
   }
   prev = c;
   c = tolower(c);
@@ -152,7 +135,7 @@ void printChar(char c) {
       bridge(3, 2);
       break;
     case 'r':
-      bridge(3, 1); //NOT SET UP
+      bridge(3, 1);
       break;
     case 's':
       bridge(6, 4);
